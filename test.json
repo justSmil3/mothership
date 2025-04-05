@@ -1,0 +1,11 @@
+{
+  "summary": "The Model Context Protocol tool appears to be a software solution designed to help track and maintain context for machine learning models. Here are the key functionalities:\n\n1. Context Definition:\n- Allows defining context metadata through dedicated Python classes\n- Supports definition of model artifacts and data splits\n- Enables tracking of resource files and dataset information\n\n2. Context Management:\n- Provides versioning capabilities for model context\n- Manages file-based resources efficiently\n- Handles feature metadata and tracking\n- Supports context inheritance\n\n3. Key Features:\n- Easy integration with existing ML workflows\n- Support for model governance and compliance\n- Ability to maintain model lineage\n- Resource version tracking\n\n4. Technical Implementation:\n- Python-based implementation\n- CLI interface for basic operations\n- Docker support for containerized deployment\n- Integration capabilities with ML frameworks",
+  "instruction": {
+    "command": "docker run",
+    "args": [
+      "-v $(pwd):/workspace",
+      "ghcr.io/ml6team/model-context-protocol:latest",
+      "bash"
+    ]
+  }
+}
