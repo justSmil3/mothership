@@ -93,8 +93,9 @@ def prep_tools():
             for root, _, files in os.walk(os.path.join(root,dir)):
                 for file in files:
                     if file == "README.md":
-                        ...
-
+                        # research_md_file(os.path.join(root, file))
+                        print(os.path.join(root, file))
+    
 def main():
     load_dotenv()
     client = OpenAI()
@@ -159,4 +160,5 @@ def search():
     conn.close()
 
 if __name__ == "__main__":
-    research_md_file("./servers/src/memory/README.md")
+    # research_md_file("./servers/src/memory/README.md")
+    prep_tools()
