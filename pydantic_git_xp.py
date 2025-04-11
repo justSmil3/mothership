@@ -2,12 +2,17 @@ from pydantic_ai.mcp import MCPServerStdio
 from pydantic_ai import Agent
 from dotenv import load_dotenv
 import asyncio
+import json
 
 load_dotenv()
 
+with open("./mcp_servers/time.json", 'r', encoding="utf-8") as f:
+    server_data = json.loads(f.read())
+
+
 server = MCPServerStdio(
-        command="docker",
-        args=["run", "--rm", "-i", "mcp/time"]
+        command=server_data['command'],
+        args=server_data['args']
         )
 
 agent = Agent(
@@ -19,7 +24,7 @@ agent._mcp_servers = [server]
 
 async def main():
     async with agent.run_mcp_servers():
-        response=await agent.run("what is the current time")
+        response=await agent.run("what is the current time in bali, and what time is it in frankfurt")
         print(response.data)
 
 if __name__ == "__main__":

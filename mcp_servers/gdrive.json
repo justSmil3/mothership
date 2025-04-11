@@ -1,0 +1,20 @@
+{
+  "command": "docker",
+  "args": [
+    "run",
+    "-i",
+    "--rm",
+    "--mount",
+    "type=bind,source=/path/to/gcp-oauth.keys.json,target=/gcp-oauth.keys.json",
+    "-v",
+    "mcp-gdrive:/gdrive-server",
+    "-e",
+    "GDRIVE_OAUTH_PATH=/gcp-oauth.keys.json",
+    "-e",
+    "GDRIVE_CREDENTIALS_PATH=/gdrive-server/credentials.json",
+    "-p",
+    "3000:3000",
+    "mcp/gdrive",
+    "auth"
+  ]
+}

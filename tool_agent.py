@@ -14,7 +14,7 @@ logfire.instrument_anthropic()
 env_vars = dotenv_values(".env")
 load_dotenv()
 
-server = MCPServerStdio("uv", ["run", "retrieve_tool_tool.py"])
+server = MCPServerStdio("uv", ["run", "mothership.py"])
 model = AnthropicModel(
         "claude-3-7-sonnet-20250219", provider=AnthropicProvider(api_key=env_vars.get("ANTHROPIC_API_KEY"))
         )
@@ -26,7 +26,7 @@ agent = Agent(
 
 async def main():
     async with agent.run_mcp_servers():
-        result = await agent.run('Create a postgres database and fill it up with files from the help.csv file. make it run in a docker container. consulidate the github documentation for help')
+        result = await agent.run('fetch the web for most relevant informations about mcp marketplaces, compile a list of all of those things and add the current time in frankfurt to it')
     print(result.data)
 
 if __name__ == "__main__":

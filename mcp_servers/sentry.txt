@@ -1,0 +1,1 @@
+"get_sentry_issue\nRetrieve and analyze a Sentry issue by ID or URL\nInput:\nissue_id_or_url\n (string): Sentry issue ID or URL to analyze\nReturns: Issue details including:\nTitle\nIssue ID\nStatus\nLevel\nFirst seen timestamp\nLast seen timestamp\nEvent count\nFull stacktrace\n"

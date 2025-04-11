@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "sentry": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "mcp/sentry",
+        "--auth-token",
+        "YOUR_SENTRY_TOKEN"
+      ]
+    }
+  }
+}

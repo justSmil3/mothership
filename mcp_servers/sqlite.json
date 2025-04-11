@@ -1,0 +1,13 @@
+{
+  "command": "docker",
+  "args": [
+    "run",
+    "--rm",
+    "-i",
+    "-v",
+    "mcp-test:/mcp",
+    "mcp/sqlite",
+    "--db-path",
+    "/mcp/test.db"
+  ]
+}

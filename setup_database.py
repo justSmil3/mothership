@@ -28,12 +28,12 @@ def refin(e):
     return result
 
 def research_md_file(path):
+    name = path.split('/')[-1].split('\\')[0]
     env_vars = dotenv_values(".env")
     model = AnthropicModel("claude-3-5-sonnet-latest", provider=AnthropicProvider(api_key=env_vars.get("ANTHROPIC_API_KEY")))
     agent = Agent(
             model=model,
             system_prompt="you are an worker who receives a markdown file and extracts relevant information from it",
-            result_type=sturctue
             )
     with open(path, 'r', encoding="utf-8") as f:
         markdown_content = f.read()
@@ -70,8 +70,26 @@ def research_md_file(path):
         fin = element.children
         description += refin(fin)
 
-    print(commands)
-    print(description)
+    name += ".txt"
+    print("................................")
+    if len(commands) == 0:
+        return
+    while commands[-1] != '}':
+        commands = commands[:-1]
+        if len(commands) == 0:
+            return
+    #prompt = f"the following text is wrong json. turn it into real json and return it as json: {commands}"
+    #results = agent.run_sync(prompt)
+    #commands_json = json.loads(results.data)
+    #data = commands_json["mcpServers"]
+    #print(data)
+    #for key, value in data.items():
+    value = description 
+    with open(os.path.join("./mcp_servers/", name), 'w', encoding="utf-8") as f:
+        json.dump(value, f, indent=2, ensure_ascii=False)
+    #return
+    # print(description)
+    return 
     exit()
     prompt = """
     The following text is a Readme file from a Model Context Protocol tool: {content}
@@ -88,41 +106,61 @@ def research_md_file(path):
 
 
 def prep_tools():
-    for _, dirs, _ in os.walk("./servers/sec/"):
+    for rroot, dirs, _ in os.walk("./servers/src/"):
         for dir in dirs:
-            for root, _, files in os.walk(os.path.join(root,dir)):
+            for root, _, files in os.walk(os.path.join(rroot,dir)):
                 for file in files:
                     if file == "README.md":
-                        # research_md_file(os.path.join(root, file))
-                        print(os.path.join(root, file))
+                        research_md_file(os.path.join(root, file))
     
 def main():
     load_dotenv()
     client = OpenAI()
     conn = psycopg2.connect("dbname=toolnamestore user=chris password=1234 host=localhost port=5433")
     cur = conn.cursor()
+    registered_files = []
 
-    for root, dirs, files in os.walk("./servers/src/"):
-        for dir in dirs:
-            print(f"{root}{dir}")
-            for root2, _, files2 in os.walk(os.path.join(root,dir)):
-                for file in files2: 
-                    if file == "README.md":
-                        with open("README.md", "r") as f:
-                            readme_text = f.read()
+    
+    cur.execute("ALTER TABLE items ADD COLUMN description TEXT;")
+    cur.execute("CREATE TEMP TABLE tmp (name TEXT, description TEXT);")
+    
+    
+    for root, _, files in os.walk("./mcp_servers/"):
+        for file in files:
+            name = file.split('.')[0]
+            if name in registered_files:
+                continue
+            registered_files.append(name)
+            path = f"{root}{name}"
+            txt_path = path + ".txt"
+            json_path = path + ".json"
+            with open(txt_path, "r") as f:
+                description = f.read()
+            with open(json_path, "r") as f:
+                config = f.read()
 
-                        response = client.embeddings.create(
-                                input=readme_text,
-                                model="text-embedding-3-small"
-                                )
-                        embedding = response.data[0].embedding
-                        print(embedding)
-                        name = dir 
-                        id = str(uuid.uuid4())
-                        #cur.execute(
-                        #        "INSERT INTO items (embedding, name) VALUES (%s, %s)",
-                        #        (embedding, name)
-                        #        )
+            #response = client.embeddings.create(
+            #    input=description,
+            #    model="text-embedding-3-small"
+            #)
+            #embedding = response.data[0].embedding
+            
+            #id = str(uuid.uuid4())
+            #print(config)
+            cur.execute(
+                "INSERT INTO tmp (name, description) VALUES (%s, %s)",
+                (name, description)
+            )
+
+    cur.execute(
+            "UPDATE items SET description = tmp.description FROM tmp WHERE items.name = tmp.name;"
+            )
+
+    cur.execute("SELECT name, description FROM items;")
+    rows = cur.fetchall()
+    for row in rows:
+        name, description = row
+        print(f'Name: {name}, Description: {description}')
     conn.commit()
     cur.close()
     conn.close()
@@ -161,4 +199,5 @@ def search():
 
 if __name__ == "__main__":
     # research_md_file("./servers/src/memory/README.md")
-    prep_tools()
+    # prep_tools()
+    main()

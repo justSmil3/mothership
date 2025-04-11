@@ -1,0 +1,1 @@
+"Image generation server for Claude Desktop using EverArt's API.\n"

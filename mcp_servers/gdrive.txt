@@ -1,0 +1,1 @@
+"This MCP server integrates with Google Drive to allow listing, reading, and searching over files.\nsearch\nSearch for files in Google Drive\nInput: \nquery\n (string): Search query\nReturns file names and MIME types of matching files\n"
